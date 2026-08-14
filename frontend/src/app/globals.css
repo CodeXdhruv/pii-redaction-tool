@@ -131,7 +131,7 @@ body {
   color: var(--text);
 }
 
-.github-icon-btn {
+.github-icon-btn, .portfolio-icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,7 +140,7 @@ body {
   padding: 0.25rem;
 }
 
-.github-icon-btn:hover {
+.github-icon-btn:hover, .portfolio-icon-btn:hover {
   color: var(--text);
   transform: scale(1.08);
 }

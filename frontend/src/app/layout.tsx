@@ -21,6 +21,15 @@ export default function RootLayout({
           <nav className="nav-links">
             <a href="#upload-section" className="nav-link">Redact</a>
             <a 
+              href="https://itesh.is-a.dev" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="portfolio-icon-btn"
+              aria-label="View Portfolio"
+            >
+              <img src="/portfolio.svg" alt="Portfolio" width="15" height="15" />
+            </a>
+            <a 
               href="https://github.com/iteshxt/pii-redaction-tool" 
               target="_blank" 
               rel="noopener noreferrer" 
