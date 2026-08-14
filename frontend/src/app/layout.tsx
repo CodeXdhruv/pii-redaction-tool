@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PII Redaction Tool — Secure Document Anonymizer",
+  title: "Maskr — Secure PII Redaction & Anonymizer",
   description: "Anonymize sensitive information including Names, Emails, Phone Numbers, Addresses, SSNs, Credit Cards, Dates of Birth, and IPs from Word documents (.docx) with high precision.",
 };
 
@@ -16,8 +16,8 @@ export default function RootLayout({
       <body>
         <header>
           <a href="#" className="logo-container">
-            <div className="logo-icon">A</div>
-            <span className="logo-text">Antigravity PII</span>
+            <img src="/maskr-logo.svg" alt="Maskr Logo" width="32" height="32" style={{ borderRadius: '8px' }} />
+            <span className="logo-text">Maskr</span>
           </a>
           <nav className="nav-links">
             <a href="#" className="nav-link active">Tool</a>
@@ -31,7 +31,7 @@ export default function RootLayout({
         </header>
         {children}
         <footer>
-          <p>© 2026 Antigravity PII Redaction Tool. Built for secure enterprise document processing.</p>
+          <p>© 2026 Maskr PII Redaction Tool. Built for secure enterprise document processing.</p>
         </footer>
       </body>
     </html>

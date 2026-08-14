@@ -185,7 +185,7 @@ export default function Home() {
   return (
     <main className="app-container">
       <section className="hero">
-        <h1>Intelligent PII Redaction</h1>
+        <h1>Anonymize Documents with Maskr</h1>
         <p>
           Securely redact and anonymize personal identifiers from regulatory documents (such as Draft Red Herring Prospectuses) instantly. Replaces sensitive fields with context-aware, realistic alternatives while maintaining document structure and formatting.
         </p>
@@ -197,7 +197,7 @@ export default function Home() {
             className={`tab-btn ${landingTab === 'redact' ? 'active' : ''}`}
             onClick={() => setLandingTab('redact')}
           >
-            PII Redactor Tool
+            Maskr Redactor Tool
           </button>
           <button 
             className={`tab-btn ${landingTab === 'benchmark' ? 'active' : ''}`}
