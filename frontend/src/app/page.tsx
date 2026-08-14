@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import BeforeAfterRedaction from './components/BeforeAfterRedaction';
+import { 
+  User, Mail, Phone, Building2, MapPin, Calendar, Globe, CreditCard, Settings, Key, 
+  Download, Eye, RotateCcw, Lock, FileText, CheckCircle2 
+} from 'lucide-react';
 
 interface PIIStat {
   original: string;
@@ -267,16 +271,16 @@ export default function Home() {
   // Labeled list of icons for the stats cards
   const getEntityIcon = (type: string) => {
     switch (type) {
-      case "Full Name": return "👤";
-      case "Email Address": return "✉️";
-      case "Phone Number": return "📞";
-      case "Company Name": return "🏢";
-      case "Physical Address": return "📍";
-      case "Date of Birth / Date": return "📅";
-      case "IP Address": return "🌐";
-      case "Credit Card Number": return "💳";
-      case "Social Security Number": return "🔑";
-      default: return "⚙️";
+      case "Full Name": return <User size={18} style={{ color: 'var(--primary)' }} />;
+      case "Email Address": return <Mail size={18} style={{ color: 'var(--primary)' }} />;
+      case "Phone Number": return <Phone size={18} style={{ color: 'var(--primary)' }} />;
+      case "Company Name": return <Building2 size={18} style={{ color: 'var(--primary)' }} />;
+      case "Physical Address": return <MapPin size={18} style={{ color: 'var(--primary)' }} />;
+      case "Date of Birth / Date": return <Calendar size={18} style={{ color: 'var(--primary)' }} />;
+      case "IP Address": return <Globe size={18} style={{ color: 'var(--primary)' }} />;
+      case "Credit Card Number": return <CreditCard size={18} style={{ color: 'var(--primary)' }} />;
+      case "Social Security Number": return <Key size={18} style={{ color: 'var(--primary)' }} />;
+      default: return <Settings size={18} style={{ color: 'var(--primary)' }} />;
     }
   };
 
@@ -411,7 +415,7 @@ export default function Home() {
             {file && (
               <div className="file-info" style={{ marginTop: '1.25rem' }}>
                 <div className="file-details">
-                  <span className="file-icon">📝</span>
+                  <span className="file-icon"><FileText size={18} style={{ color: 'var(--primary)' }} /></span>
                   <div>
                     <div className="file-name">{file.name}</div>
                     <div className="file-size">{(file.size / (1024 * 1024)).toFixed(2)} MB</div>
@@ -422,7 +426,7 @@ export default function Home() {
             )}
 
             <div className="security-note">
-              <span>🔒</span> Your files are processed securely and never stored.
+              <Lock size={14} style={{ color: 'var(--text-muted)' }} /> Your files are processed securely and never stored.
             </div>
           </div>
 
@@ -578,9 +582,9 @@ export default function Home() {
             <div className="results-grid">
               {/* Left Column: Complete status, Stats Grid, Metrics */}
               <div className="results-left">
-                <div className="complete-header">
-                  <div className="complete-icon">✓</div>
-                  <h3 className="complete-title">Redaction Complete!</h3>
+                <div className="complete-header" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                  <CheckCircle2 size={24} style={{ color: 'var(--success)' }} />
+                  <h3 className="complete-title" style={{ margin: 0 }}>Redaction Complete!</h3>
                 </div>
                 <p className="complete-subtitle">Your document has been processed successfully.</p>
 
@@ -589,7 +593,7 @@ export default function Home() {
                   {resultsEntitiesList.map(type => {
                     const count = type === "Configs" ? 0 : (entityCounts[type] || 0);
                     const label = type === "Configs" ? "Configs" : getEntityLabel(type);
-                    const icon = type === "Configs" ? "⚙️" : getEntityIcon(type);
+                    const icon = type === "Configs" ? <Settings size={18} style={{ color: 'var(--primary)' }} /> : getEntityIcon(type);
 
                     return (
                       <div key={type} className="stat-card">
@@ -632,11 +636,11 @@ export default function Home() {
                 <div className="action-card">
                   <h4 className="action-card-title">Download</h4>
                   <p className="action-card-subtitle">Your redacted files & reports</p>
-                  <button className="btn btn-primary btn-block" onClick={handleDownload} style={{ padding: '0.85rem', marginBottom: '0.75rem' }}>
-                    ⬇️ Download DOCX File
+                  <button className="btn btn-primary btn-block" onClick={handleDownload} style={{ padding: '0.85rem', marginBottom: '0.75rem', gap: '0.5rem' }}>
+                    <Download size={16} /> Download DOCX
                   </button>
-                  <button className="btn btn-secondary btn-block" onClick={handleDownloadPDF} disabled={downloadingPDF} style={{ padding: '0.85rem' }}>
-                    {downloadingPDF ? "Generating PDF..." : "⬇️ Download PDF Report"}
+                  <button className="btn btn-secondary btn-block" onClick={handleDownloadPDF} disabled={downloadingPDF} style={{ padding: '0.85rem', gap: '0.5rem' }}>
+                    {downloadingPDF ? "Generating PDF..." : <><FileText size={16} /> Download PDF Report</>}
                   </button>
                 </div>
 
@@ -646,10 +650,9 @@ export default function Home() {
                   <button 
                     className="btn btn-secondary btn-block" 
                     onClick={() => setShowReportModal(true)}
-                    style={{ padding: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    style={{ padding: '0.85rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
                   >
-                    <span style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>📊 View Full Report</span>
-                    <span>📄</span>
+                    <Eye size={16} /> View Full Report
                   </button>
                 </div>
 
@@ -659,10 +662,9 @@ export default function Home() {
                   <button 
                     className="btn btn-secondary btn-block" 
                     onClick={removeFile}
-                    style={{ padding: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    style={{ padding: '0.85rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
                   >
-                    <span>Process Another Document</span>
-                    <span>🔄</span>
+                    <RotateCcw size={16} /> Process Another Document
                   </button>
                 </div>
 
@@ -821,8 +823,8 @@ export default function Home() {
             <div className="modal-header">
               <span className="modal-title">Maskr Security Report</span>
               <div className="modal-actions">
-                <button className="btn btn-primary" onClick={handleDownloadPDF} disabled={downloadingPDF}>
-                  {downloadingPDF ? "Generating PDF..." : "⬇️ Download PDF Report"}
+                <button className="btn btn-primary" onClick={handleDownloadPDF} disabled={downloadingPDF} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {downloadingPDF ? "Generating PDF..." : <><Download size={16} /> Download PDF Report</>}
                 </button>
                 <button className="btn btn-secondary" onClick={() => setShowReportModal(false)} style={{ padding: '0.4rem 0.85rem' }}>
                   ✕
