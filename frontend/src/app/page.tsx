@@ -303,12 +303,9 @@ export default function Home() {
   return (
     <>
       <main className="app-container">
-      <section className="hero">
-        <h1>Anonymize Documents with Maskr</h1>
-        <p>
-          Securely redact and anonymize personal identifiers from regulatory documents (such as Draft Red Herring Prospectuses) instantly. Replaces sensitive fields with context-aware, realistic alternatives while maintaining document structure and formatting.
-        </p>
-      </section>
+      {status !== 'success' && status !== 'processing' && (
+        <BeforeAfterRedaction />
+      )}
 
       {/* Step Indicators */}
       {status !== 'success' && status !== 'processing' && (
@@ -550,9 +547,6 @@ export default function Home() {
         </div>
       )}
 
-      {status !== 'success' && status !== 'processing' && (
-        <BeforeAfterRedaction />
-      )}
 
       {/* STEP 3: Results Dashboard (Success View) */}
       {status === 'success' && (

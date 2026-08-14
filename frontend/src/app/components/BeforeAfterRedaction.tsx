@@ -11,18 +11,13 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
   const [sliderVal, setSliderVal] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Entrance animations state
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    // Check prefers-reduced-motion
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (!mediaQuery.matches) {
-      // Trigger animations after mount
       const timer = setTimeout(() => {
         setAnimate(true);
-        // Animate slider from 40% to 50%
         let start = 40;
         const interval = setInterval(() => {
           if (start >= 50) {
@@ -39,7 +34,6 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
     }
   }, []);
 
-  // Handle drag/movement on the main container card
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -68,7 +62,6 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
         handleMove(e.clientX);
       }
     };
-
     window.addEventListener('mouseup', handleMouseUp);
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
@@ -77,7 +70,6 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
     };
   }, [isDragging]);
 
-  // Keyboard navigation when focused
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
@@ -95,166 +87,163 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
   };
 
   return (
-    <section className={`before-after-section ${className}`}>
-      {/* Header */}
-      <div className={`section-header-wrap ${animate ? 'fade-up-active' : ''}`}>
-        <h2 className="before-after-title">
-          See the Difference <br />
-          <span className="accent-gradient">Before</span> & After Redaction
+    <section className={`hero-split-container ${className}`}>
+      {/* Left Column: Catchy copy and badges */}
+      <div className={`hero-left-col ${animate ? 'fade-up-active' : ''}`}>
+        <div className="hero-badge">
+          <span className="hero-badge-dot"></span>
+          🛡️ Enterprise-Grade Document Redaction
+        </div>
+        <h1 className="hero-split-title">
+          Anonymize Sensitive Files Instantly
+        </h1>
+        <h2 className="hero-split-subtitle">
+          See the Difference <span className="accent-gradient">Before</span> & After
         </h2>
-        <p className="before-after-desc">
-          Automatically detect and replace personally identifiable information while keeping your document intact.
+        <p className="hero-split-desc">
+          Protect privacy with intelligent context-aware redaction. Maskr automatically replaces names, emails, phones, and addresses from legal or financial documents with realistic alternatives while preserving 100% of formatting, columns, and styles.
         </p>
-      </div>
 
-      {/* Feature Badges */}
-      <div className={`feature-badges-row ${animate ? 'badges-stagger-active' : ''}`}>
-        <div className="feature-pill">
-          <ShieldCheck className="feature-pill-icon" size={16} />
-          <span>Smart PII Detection</span>
-        </div>
-        <div className="feature-pill">
-          <Zap className="feature-pill-icon" size={16} />
-          <span>Fast & Accurate</span>
-        </div>
-        <div className="feature-pill">
-          <Lock className="feature-pill-icon" size={16} />
-          <span>Privacy First</span>
-        </div>
-      </div>
-
-      {/* Main Slider Container Card */}
-      <div 
-        className={`comparison-card-container ${isDragging ? 'dragging' : ''}`}
-        ref={containerRef}
-        onMouseDown={handleMouseDown}
-        onTouchStart={() => setIsDragging(true)}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={() => setIsDragging(false)}
-      >
-        {/* Original Side Document (Sits fully underneath) */}
-        <div 
-          className="document-layer original-layer"
-          style={{ clipPath: `inset(0 ${100 - sliderVal}% 0 0)` }}
-        >
-          <div className="layer-tag-pill original-pill">ORIGINAL</div>
-          
-          <div className="doc-watermark">CONFIDENTIAL</div>
-          
-          <div className="doc-paper-preview">
-            <div className="doc-paper-header">
-              <span className="doc-paper-logo">📄 AUDIT LOG</span>
-              <span className="doc-paper-status">RESTRICTED</span>
-            </div>
-            
-            <div className="doc-paper-body">
-              <p className="doc-paper-para">
-                We have conducted a deep transaction check for the entity profiles listed inside the lead underwriter registry. Below is the primary contact metadata verified for identity resolution.
-              </p>
-              
-              <div className="doc-paper-grid">
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">LEAD CLIENT</div>
-                  <div className="doc-paper-value original-highlight">John Smith</div>
-                </div>
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">EMAIL ADDRESS</div>
-                  <div className="doc-paper-value original-highlight">john@gmail.com</div>
-                </div>
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">PHONE NUMBER</div>
-                  <div className="doc-paper-value original-highlight">+91 9876543210</div>
-                </div>
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">LOCATION RESIDENCE</div>
-                  <div className="doc-paper-value original-highlight">Mumbai, Maharashtra</div>
-                </div>
-              </div>
-            </div>
+        {/* Feature Badges stacked/row */}
+        <div className="hero-badges-grid">
+          <div className="hero-feature-pill">
+            <ShieldCheck className="feature-pill-icon" size={16} />
+            <span>Smart PII Detection</span>
+          </div>
+          <div className="hero-feature-pill">
+            <Zap className="feature-pill-icon" size={16} />
+            <span>Fast & Accurate (NER)</span>
+          </div>
+          <div className="hero-feature-pill">
+            <Lock className="feature-pill-icon" size={16} />
+            <span>Privacy First (Secured)</span>
           </div>
         </div>
+      </div>
 
-        {/* Redacted Side Document (Sits on top, clipped on the left) */}
+      {/* Right Column: Comparison Card Slider */}
+      <div className="hero-right-col">
         <div 
-          className="document-layer redacted-layer"
-          style={{ clipPath: `inset(0 0 0 ${sliderVal}%)` }}
+          className={`comparison-card-container compact-slider ${isDragging ? 'dragging' : ''}`}
+          ref={containerRef}
+          onMouseDown={handleMouseDown}
+          onTouchStart={() => setIsDragging(true)}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={() => setIsDragging(false)}
         >
-          <div className="layer-tag-pill redacted-pill">REDACTED</div>
-          
-          <div className="doc-watermark">ANONYMIZED</div>
-
-          <div className="doc-paper-preview">
-            <div className="doc-paper-header">
-              <span className="doc-paper-logo">📄 AUDIT LOG</span>
-              <span className="doc-paper-status">RESTRICTED</span>
-            </div>
-            
-            <div className="doc-paper-body">
-              <p className="doc-paper-para">
-                We have conducted a deep transaction check for the entity profiles listed inside the lead underwriter registry. Below is the primary contact metadata verified for identity resolution.
-              </p>
-              
-              <div className="doc-paper-grid">
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">LEAD CLIENT</div>
-                  <div className="doc-paper-value redacted-highlight">Michael Carter</div>
-                </div>
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">EMAIL ADDRESS</div>
-                  <div className="doc-paper-value redacted-highlight">michael@example.com</div>
-                </div>
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">PHONE NUMBER</div>
-                  <div className="doc-paper-value redacted-highlight">+91 9123456789</div>
-                </div>
-                <div className="doc-paper-item">
-                  <div className="doc-paper-label">LOCATION RESIDENCE</div>
-                  <div className="doc-paper-value redacted-highlight">42 Example Road, Pune, Maharashtra</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Vertical Divider / Slider Handle */}
-        <div 
-          className="comparison-divider-line"
-          style={{ left: `${sliderVal}%` }}
-        >
+          {/* Original Side Document */}
           <div 
-            className="comparison-slider-handle"
-            role="slider"
-            tabIndex={0}
-            aria-label="Before and after redaction comparison"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={sliderVal}
-            onKeyDown={handleKeyDown}
+            className="document-layer original-layer"
+            style={{ clipPath: `inset(0 ${100 - sliderVal}% 0 0)` }}
           >
-            <ChevronsLeftRight className="handle-chevron-icon" size={16} />
+            <div className="layer-tag-pill original-pill">ORIGINAL</div>
+            <div className="doc-watermark">CONFIDENTIAL</div>
+            
+            <div className="doc-paper-preview compact-preview">
+              <div className="doc-paper-header">
+                <span className="doc-paper-logo">📄 AUDIT LOG</span>
+                <span className="doc-paper-status">RESTRICTED</span>
+              </div>
+              
+              <div className="doc-paper-body">
+                <div className="doc-paper-grid compact-grid">
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">LEAD CLIENT</div>
+                    <div className="doc-paper-value original-highlight">John Smith</div>
+                  </div>
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">EMAIL ADDRESS</div>
+                    <div className="doc-paper-value original-highlight">john@gmail.com</div>
+                  </div>
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">PHONE NUMBER</div>
+                    <div className="doc-paper-value original-highlight">+91 9876543210</div>
+                  </div>
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">LOCATION RESIDENCE</div>
+                    <div className="doc-paper-value original-highlight">Mumbai, MH</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Redacted Side Document */}
+          <div 
+            className="document-layer redacted-layer"
+            style={{ clipPath: `inset(0 0 0 ${sliderVal}%)` }}
+          >
+            <div className="layer-tag-pill redacted-pill">REDACTED</div>
+            <div className="doc-watermark">ANONYMIZED</div>
+
+            <div className="doc-paper-preview compact-preview">
+              <div className="doc-paper-header">
+                <span className="doc-paper-logo">📄 AUDIT LOG</span>
+                <span className="doc-paper-status">RESTRICTED</span>
+              </div>
+              
+              <div className="doc-paper-body">
+                <div className="doc-paper-grid compact-grid">
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">LEAD CLIENT</div>
+                    <div className="doc-paper-value redacted-highlight">Michael Carter</div>
+                  </div>
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">EMAIL ADDRESS</div>
+                    <div className="doc-paper-value redacted-highlight">michael@example.com</div>
+                  </div>
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">PHONE NUMBER</div>
+                    <div className="doc-paper-value redacted-highlight">+91 9123456789</div>
+                  </div>
+                  <div className="doc-paper-item">
+                    <div className="doc-paper-label">LOCATION RESIDENCE</div>
+                    <div className="doc-paper-value redacted-highlight">Pune, MH</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Vertical Divider / Slider Handle */}
+          <div 
+            className="comparison-divider-line"
+            style={{ left: `${sliderVal}%` }}
+          >
+            <div 
+              className="comparison-slider-handle compact-handle"
+              role="slider"
+              tabIndex={0}
+              aria-label="Before and after redaction comparison"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={sliderVal}
+              onKeyDown={handleKeyDown}
+            >
+              <ChevronsLeftRight className="handle-chevron-icon" size={14} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Secondary bottom slider sync track */}
-      <div className="secondary-slider-container">
-        <div className="slider-track-label">Original</div>
-        <div className="slider-input-wrapper">
-          <input 
-            type="range" 
-            min="0" 
-            max="100" 
-            value={sliderVal} 
-            onChange={(e) => setSliderVal(parseInt(e.target.value))}
-            className="sync-range-slider"
-            style={{
-              background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${sliderVal}%, #202024 ${sliderVal}%, #202024 100%)`
-            }}
-          />
+        {/* Sync Slider */}
+        <div className="secondary-slider-container compact-track" style={{ margin: '0.75rem auto 0 auto' }}>
+          <div className="slider-track-label">Original</div>
+          <div className="slider-input-wrapper">
+            <input 
+              type="range" 
+              min="0" 
+              max="100" 
+              value={sliderVal} 
+              onChange={(e) => setSliderVal(parseInt(e.target.value))}
+              className="sync-range-slider"
+              style={{
+                background: `linear-gradient(to right, var(--primary) 0%, var(--primary) ${sliderVal}%, #202024 ${sliderVal}%, #202024 100%)`
+              }}
+            />
+          </div>
+          <div className="slider-track-label">Redacted</div>
         </div>
-        <div className="slider-track-label">Redacted</div>
       </div>
-      <div className="secondary-slider-caption">Original / Redacted</div>
     </section>
   );
 }
