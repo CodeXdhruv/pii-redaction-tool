@@ -313,54 +313,22 @@ export default function Home() {
 
       <div id="upload-section" style={{ width: '100%' }}>
       {/* Step Indicators */}
-      {status !== 'success' && status !== 'processing' && (
-        <div className="steps-indicator">
-          <span className={`step-item ${landingTab === 'redact' ? 'active' : ''}`}>
-            <span className="step-num">1</span> Upload
-          </span>
-          <div className="step-line" />
-          <span className="step-item">
-            <span className="step-num">2</span> Processing
-          </span>
-          <div className="step-line" />
-          <span className="step-item">
-            <span className="step-num">3</span> Results
-          </span>
-        </div>
-      )}
-      {status === 'processing' && (
-        <div className="steps-indicator">
-          <span className="step-item">
-            <span className="step-num">1</span> Upload
-          </span>
-          <div className="step-line" />
-          <span className="step-item active">
-            <span className="step-num">2</span> Processing
-          </span>
-          <div className="step-line" />
-          <span className="step-item">
-            <span className="step-num">3</span> Results
-          </span>
-        </div>
-      )}
-      {status === 'success' && (
-        <div className="steps-indicator">
-          <span className="step-item">
-            <span className="step-num">1</span> Upload
-          </span>
-          <div className="step-line" />
-          <span className="step-item">
-            <span className="step-num">2</span> Processing
-          </span>
-          <div className="step-line" />
-          <span className="step-item active">
-            <span className="step-num">3</span> Results
-          </span>
-        </div>
-      )}
+      <div className="steps-indicator">
+        <span className={`step-item ${status === 'idle' ? 'active' : ''}`}>
+          <span className="step-num">1</span> Upload
+        </span>
+        <div className="step-line" />
+        <span className={`step-item ${status === 'processing' ? 'active' : ''}`}>
+          <span className="step-num">2</span> Processing
+        </span>
+        <div className="step-line" />
+        <span className={`step-item ${status === 'success' ? 'active' : ''}`}>
+          <span className="step-num">3</span> Results
+        </span>
+      </div>
 
       {/* Top level tabs for landing page view */}
-      {status !== 'success' && status !== 'processing' && (
+      {status !== 'processing' && (
         <div className="tabs-container" style={{ justifyContent: 'center', marginBottom: '2.5rem' }}>
           <button 
             className={`tab-btn ${landingTab === 'redact' ? 'active' : ''}`}

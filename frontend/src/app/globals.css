@@ -72,85 +72,79 @@ body {
   flex-direction: column;
 }
 
-header {
-  border-bottom: 1px solid var(--border);
-  padding: 1.25rem 2rem;
+/* Floating Pill Navbar */
+.pill-navbar {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  background-color: rgba(11, 11, 12, 0.8);
-  backdrop-filter: blur(12px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  gap: 1.5rem;
+  width: fit-content;
+  max-width: 90%;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(11, 11, 12, 0.7);
+  backdrop-filter: blur(20px);
+  padding: 0.45rem 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
+.pill-navbar:hover {
+  border-color: rgba(168, 85, 247, 0.25);
+  box-shadow: 0 10px 35px rgba(124, 58, 237, 0.1);
 }
 
-.logo-icon {
-  background: linear-gradient(135deg, var(--primary), var(--pink));
-  color: var(--text);
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+.logo-icon-only {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-title);
-  font-weight: 800;
-  font-size: 1.2rem;
+  padding: 0.25rem;
+  transition: transform 0.2s ease;
 }
 
-.logo-text {
-  font-family: var(--font-title);
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: var(--text);
-  letter-spacing: -0.5px;
+.logo-icon-only:hover {
+  transform: scale(1.08);
 }
 
-.nav-links {
+.pill-navbar .nav-links {
   display: flex;
-  gap: 1.5rem;
   align-items: center;
+  gap: 1.25rem;
 }
 
-.nav-link {
+.pill-navbar .nav-link {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 700;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
   transition: color 0.2s ease;
+  padding: 0.25rem 0.5rem;
 }
 
-.nav-link:hover, .nav-link.active {
+.pill-navbar .nav-link:hover {
   color: var(--text);
 }
 
-.github-btn {
-  border: 1px solid var(--border);
-  background-color: var(--card);
-  color: var(--text);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
+.github-icon-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0.25rem;
 }
 
-.github-btn:hover {
-  background-color: var(--card-hover);
-  border-color: var(--text-muted);
+.github-icon-btn:hover {
+  color: var(--text);
+  transform: scale(1.08);
 }
+
 
 /* Hero Section */
 .hero {
@@ -565,21 +559,7 @@ footer {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  header {
-    flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.25rem 1rem;
-    text-align: center;
-  }
-  .nav-links {
-    flex-direction: column;
-    width: 100%;
-    gap: 1rem;
-  }
-  .github-btn {
-    width: 100%;
-    justify-content: center;
-  }
+
   
   /* success bar layout wrap styling */
   .workspace-card > div:has(.btn) {
@@ -1178,7 +1158,7 @@ footer {
   max-width: 1200px;
   margin: 0 auto;
   align-items: start;
-  padding-top: 4.5rem;
+  padding-top: 6.5rem;
   min-height: calc(100vh - 90px);
   padding-bottom: 6rem;
   position: relative;
