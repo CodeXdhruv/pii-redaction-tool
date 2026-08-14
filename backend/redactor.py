@@ -135,7 +135,22 @@ class PIIRedactor:
             language="en",
             entities=list(self.entity_mapping.keys())
         )
-        return sorted(results, key=lambda x: x.start)
+        filtered = [r for r in results if r.score >= 0.4]
+        filtered_sorted = sorted(
+            filtered,
+            key=lambda x: (x.score, x.end - x.start),
+            reverse=True
+        )
+        non_overlapping = []
+        for res in filtered_sorted:
+            overlap = False
+            for accepted in non_overlapping:
+                if max(res.start, accepted.start) < min(res.end, accepted.end):
+                    overlap = True
+                    break
+            if not overlap:
+                non_overlapping.append(res)
+        return sorted(non_overlapping, key=lambda x: x.start)
 
     def redact_text_block(self, text: str) -> tuple[str, list[dict]]:
         results = self.analyze_text(text)
