@@ -452,77 +452,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Global Benchmark tab on homepage */}
-      {landingTab === 'benchmark' && status !== 'success' && (
-        <div className="workspace-card">
-          <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '1.5rem', marginBottom: '1rem' }}>Detection Model Performance Report</h3>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
-            The redactor's performance evaluated against a standard ground-truth prospectus testing dataset.
-          </p>
-
-          {loadingEval && (
-            <div className="spinner-container">
-              <div className="spinner"></div>
-            </div>
-          )}
-
-          {evalReport && !loadingEval && (
-            <div>
-              <div className="eval-summary-cards">
-                <div className="eval-metric-card">
-                  <div className="eval-metric-name">Precision</div>
-                  <div className="eval-metric-value">{(evalReport.global.Precision * 100).toFixed(1)}%</div>
-                  <div className="eval-metric-subtext">Ability to avoid false positives</div>
-                </div>
-                <div className="eval-metric-card">
-                  <div className="eval-metric-name">Recall</div>
-                  <div className="eval-metric-value">{(evalReport.global.Recall * 100).toFixed(1)}%</div>
-                  <div className="eval-metric-subtext">Ability to catch all sensitive items</div>
-                </div>
-                <div className="eval-metric-card">
-                  <div className="eval-metric-name">F1 Score</div>
-                  <div className="eval-metric-value">{(evalReport.global.F1 * 100).toFixed(1)}%</div>
-                  <div className="eval-metric-subtext">Harmonic mean of precision & recall</div>
-                </div>
-              </div>
-
-              <h4 style={{ fontFamily: 'var(--font-title)', fontSize: '1.2rem', marginBottom: '0.75rem', marginTop: '1.5rem' }}>Performance Breakdown by Entity</h4>
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>PII Entity Type</th>
-                      <th>True Positives (TP)</th>
-                      <th>False Positives (FP)</th>
-                      <th>False Negatives (FN)</th>
-                      <th>Precision</th>
-                      <th>Recall</th>
-                      <th>F1 Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(evalReport.entities).map(([name, metrics]) => (
-                      <tr key={name}>
-                        <td style={{ fontWeight: 600 }}>{name}</td>
-                        <td>{metrics.TP}</td>
-                        <td>{metrics.FP}</td>
-                        <td>{metrics.FN}</td>
-                        <td>{(metrics.Precision * 100).toFixed(0)}%</td>
-                        <td>{(metrics.Recall * 100).toFixed(0)}%</td>
-                        <td style={{ fontWeight: 600, color: 'var(--pink)' }}>{(metrics.F1 * 100).toFixed(0)}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-
-      {/* STEP 3: Results Dashboard (Success View) */}
-      {status === 'success' && (
+      {landingTab === 'redact' && status === 'success' && (
         <div style={{ width: '100%' }}>
           {/* Tab Navigation switches between overview results grid and detailed list */}
           <div className="tabs-container" style={{ marginBottom: '1.5rem' }}>
@@ -781,6 +711,77 @@ export default function Home() {
           )}
         </div>
       )}
+
+      {/* Global Benchmark tab on homepage */}
+      {landingTab === 'benchmark' && (
+        <div className="workspace-card">
+          <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '1.5rem', marginBottom: '1rem' }}>Detection Model Performance Report</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+            The redactor's performance evaluated against a standard ground-truth prospectus testing dataset.
+          </p>
+
+          {loadingEval && (
+            <div className="spinner-container">
+              <div className="spinner"></div>
+            </div>
+          )}
+
+          {evalReport && !loadingEval && (
+            <div>
+              <div className="eval-summary-cards">
+                <div className="eval-metric-card">
+                  <div className="eval-metric-name">Precision</div>
+                  <div className="eval-metric-value">{(evalReport.global.Precision * 100).toFixed(1)}%</div>
+                  <div className="eval-metric-subtext">Ability to avoid false positives</div>
+                </div>
+                <div className="eval-metric-card">
+                  <div className="eval-metric-name">Recall</div>
+                  <div className="eval-metric-value">{(evalReport.global.Recall * 100).toFixed(1)}%</div>
+                  <div className="eval-metric-subtext">Ability to catch all sensitive items</div>
+                </div>
+                <div className="eval-metric-card">
+                  <div className="eval-metric-name">F1 Score</div>
+                  <div className="eval-metric-value">{(evalReport.global.F1 * 100).toFixed(1)}%</div>
+                  <div className="eval-metric-subtext">Harmonic mean of precision & recall</div>
+                </div>
+              </div>
+
+              <h4 style={{ fontFamily: 'var(--font-title)', fontSize: '1.2rem', marginBottom: '0.75rem', marginTop: '1.5rem' }}>Performance Breakdown by Entity</h4>
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>PII Entity Type</th>
+                      <th>True Positives (TP)</th>
+                      <th>False Positives (FP)</th>
+                      <th>False Negatives (FN)</th>
+                      <th>Precision</th>
+                      <th>Recall</th>
+                      <th>F1 Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(evalReport.entities).map(([name, metrics]) => (
+                      <tr key={name}>
+                        <td style={{ fontWeight: 600 }}>{name}</td>
+                        <td>{metrics.TP}</td>
+                        <td>{metrics.FP}</td>
+                        <td>{metrics.FN}</td>
+                        <td>{(metrics.Precision * 100).toFixed(0)}%</td>
+                        <td>{(metrics.Recall * 100).toFixed(0)}%</td>
+                        <td style={{ fontWeight: 600, color: 'var(--pink)' }}>{(metrics.F1 * 100).toFixed(0)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+
+
       </div>
     </main>
 
