@@ -1,0 +1,9 @@
+fastapi==0.110.0
+uvicorn==0.28.0
+python-docx==1.1.0
+presidio-analyzer==2.2.353
+spacy==3.7.4
+faker==24.0.0
+python-multipart==0.0.9
+pydantic==2.6.4
+typing-extensions==4.10.0
