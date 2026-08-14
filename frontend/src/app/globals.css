@@ -1176,8 +1176,13 @@ footer {
   gap: 3.5rem;
   width: 100%;
   max-width: 1200px;
-  margin: 3.5rem auto 4.5rem auto;
-  align-items: center;
+  margin: 0 auto;
+  align-items: start;
+  padding-top: 4.5rem;
+  min-height: calc(100vh - 90px);
+  padding-bottom: 6rem;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .hero-left-col {
@@ -1724,13 +1729,6 @@ footer {
   }
 }
 
-/* Full screen landing adjustments and scroll arrows */
-.hero-split-container {
-  min-height: calc(100vh - 90px);
-  padding-bottom: 6rem;
-  position: relative;
-  box-sizing: border-box;
-}
 
 .scroll-down-wrapper {
   position: absolute;
