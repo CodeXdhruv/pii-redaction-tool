@@ -161,21 +161,23 @@ class PIIRedactor:
         self.pii_cache[cache_key] = fake_val
         return fake_val
 
-    def analyze_text(self, text: str):
+    def analyze_text(self, text: str, entities: list[str] = None):
         """Analyzes a text block, filters by confidence, and resolves overlapping entities."""
         cleaned_text = text.strip()
         if not cleaned_text or len(cleaned_text) < 4:
             return []
         
-        # Check cache
-        if cleaned_text in self.analysis_cache:
-            return self.analysis_cache[cleaned_text]
+        # Check cache (key consists of cleaned text + selected entities tuple)
+        entities_key = tuple(sorted(entities)) if entities else tuple(sorted(self.entity_mapping.keys()))
+        cache_key = (cleaned_text, entities_key)
+        if cache_key in self.analysis_cache:
+            return self.analysis_cache[cache_key]
         
         # Analyze with Presidio
         results = self.analyzer.analyze(
             text=text,
             language="en",
-            entities=list(self.entity_mapping.keys())
+            entities=list(entities_key)
         )
         
         # Filter results with confidence threshold (e.g. >= 0.4)
@@ -204,7 +206,7 @@ class PIIRedactor:
         final_results = sorted(non_overlapping, key=lambda x: x.start)
         
         # Cache results
-        self.analysis_cache[cleaned_text] = final_results
+        self.analysis_cache[cache_key] = final_results
         return final_results
 
     def redact_text_block(self, text: str) -> tuple[str, list[dict]]:
@@ -237,13 +239,13 @@ class PIIRedactor:
             
         return redacted_text, changes[::-1] # return changes in original ascending order
 
-    def redact_paragraph(self, paragraph, stats):
+    def redact_paragraph(self, paragraph, stats, entities: list[str] = None):
         """Redacts a docx paragraph at the run level to preserve original formatting."""
         text = paragraph.text
         if not text.strip():
             return
 
-        results = self.analyze_text(text)
+        results = self.analyze_text(text, entities)
         if not results:
             return
 
@@ -314,7 +316,7 @@ class PIIRedactor:
                 "confidence": r.score
             })
 
-    def redact_document(self, input_path: str, output_path: str) -> list[dict]:
+    def redact_document(self, input_path: str, output_path: str, entities: list[str] = None) -> list[dict]:
         """Redacts an entire docx file (paragraphs, tables, headers, footers)."""
         doc = Document(input_path)
         stats = []
@@ -323,31 +325,31 @@ class PIIRedactor:
         for section in doc.sections:
             if section.header:
                 for p in section.header.paragraphs:
-                    self.redact_paragraph(p, stats)
+                    self.redact_paragraph(p, stats, entities)
                 for table in section.header.tables:
-                    self.redact_table(table, stats)
+                    self.redact_table(table, stats, entities)
             if section.footer:
                 for p in section.footer.paragraphs:
-                    self.redact_paragraph(p, stats)
+                    self.redact_paragraph(p, stats, entities)
                 for table in section.footer.tables:
-                    self.redact_table(table, stats)
+                    self.redact_table(table, stats, entities)
 
         # 2. Redact main body paragraphs
         for p in doc.paragraphs:
-            self.redact_paragraph(p, stats)
+            self.redact_paragraph(p, stats, entities)
 
         # 3. Redact tables
         for table in doc.tables:
-            self.redact_table(table, stats)
+            self.redact_table(table, stats, entities)
 
         doc.save(output_path)
         return stats
 
-    def redact_table(self, table, stats):
+    def redact_table(self, table, stats, entities: list[str] = None):
         """Recursively redact table cells."""
         for row in table.rows:
             for cell in row.cells:
                 for p in cell.paragraphs:
-                    self.redact_paragraph(p, stats)
+                    self.redact_paragraph(p, stats, entities)
                 for nested_table in cell.tables:
-                    self.redact_table(nested_table, stats)
+                    self.redact_table(nested_table, stats, entities)

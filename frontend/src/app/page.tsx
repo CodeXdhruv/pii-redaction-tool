@@ -64,6 +64,10 @@ export default function Home() {
   const [evalReport, setEvalReport] = useState<EvaluationReport | null>(null);
   const [loadingEval, setLoadingEval] = useState(false);
 
+  // Modal report and download loading states
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
+
   // Table pagination
   const [tableLimit, setTableLimit] = useState(100);
 
@@ -175,6 +179,55 @@ export default function Home() {
     document.body.removeChild(link);
   };
 
+  // Generate and download PDF report client-side on the fly
+  const handleDownloadPDF = () => {
+    setDownloadingPDF(true);
+    const scriptId = 'html2pdf-cdn-script';
+    let script = document.getElementById(scriptId) as HTMLScriptElement;
+    
+    const runExport = () => {
+      const element = document.getElementById('report-pdf-content');
+      if (!element) {
+        setDownloadingPDF(false);
+        return;
+      }
+      
+      const opt = {
+        margin:       [0.4, 0.4, 0.4, 0.4],
+        filename:     'maskr_report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2.2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      
+      const html2pdf = (window as any).html2pdf;
+      if (html2pdf) {
+        html2pdf().set(opt).from(element).save().then(() => {
+          setDownloadingPDF(false);
+        }).catch((err: any) => {
+          console.error("PDF generation failed:", err);
+          setDownloadingPDF(false);
+        });
+      } else {
+        setDownloadingPDF(false);
+      }
+    };
+
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+      script.onload = runExport;
+      script.onerror = () => {
+        console.error("Failed to load html2pdf script");
+        setDownloadingPDF(false);
+      };
+      document.body.appendChild(script);
+    } else {
+      runExport();
+    }
+  };
+
   // Fetch evaluation metrics
   const fetchEvaluation = async () => {
     setLoadingEval(true);
@@ -247,7 +300,8 @@ export default function Home() {
   ];
 
   return (
-    <main className="app-container">
+    <>
+      <main className="app-container">
       <section className="hero">
         <h1>Anonymize Documents with Maskr</h1>
         <p>
@@ -574,12 +628,15 @@ export default function Home() {
 
               {/* Right Column: Actions */}
               <div className="results-right">
-                {/* Download docx */}
+                {/* Download docx & PDF */}
                 <div className="action-card">
                   <h4 className="action-card-title">Download</h4>
-                  <p className="action-card-subtitle">Your redacted document</p>
-                  <button className="btn btn-primary btn-block" onClick={handleDownload} style={{ padding: '0.85rem' }}>
-                    ⬇️ Download DOCX
+                  <p className="action-card-subtitle">Your redacted files & reports</p>
+                  <button className="btn btn-primary btn-block" onClick={handleDownload} style={{ padding: '0.85rem', marginBottom: '0.75rem' }}>
+                    ⬇️ Download DOCX File
+                  </button>
+                  <button className="btn btn-secondary btn-block" onClick={handleDownloadPDF} disabled={downloadingPDF} style={{ padding: '0.85rem' }}>
+                    {downloadingPDF ? "Generating PDF..." : "⬇️ Download PDF Report"}
                   </button>
                 </div>
 
@@ -588,7 +645,7 @@ export default function Home() {
                   <h4 className="action-card-title">View Report</h4>
                   <button 
                     className="btn btn-secondary btn-block" 
-                    onClick={() => setActiveTab('table')}
+                    onClick={() => setShowReportModal(true)}
                     style={{ padding: '0.85rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                   >
                     <span style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>📊 View Full Report</span>
@@ -755,5 +812,121 @@ export default function Home() {
         </div>
       )}
     </main>
+
+      {/* Audit Report Modal */}
+      {showReportModal && (
+        <div className="modal-overlay" onClick={() => setShowReportModal(false)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">Maskr Security Report</span>
+              <div className="modal-actions">
+                <button className="btn btn-primary" onClick={handleDownloadPDF} disabled={downloadingPDF}>
+                  {downloadingPDF ? "Generating PDF..." : "⬇️ Download PDF Report"}
+                </button>
+                <button className="btn btn-secondary" onClick={() => setShowReportModal(false)} style={{ padding: '0.4rem 0.85rem' }}>
+                  ✕
+                </button>
+              </div>
+            </div>
+            <div className="modal-body">
+              {/* Light report sheet */}
+              <div className="report-paper" id="report-pdf-content">
+                <div className="report-header">
+                  <div className="report-brand">
+                    {/* SVG logo */}
+                    <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="32" height="32" rx="8" fill="#000000" />
+                      <path d="M6 13C8.5 15 11 16.5 13.5 16.5C14.8 16.5 15.3 15.7 16 15.2C16.7 15.7 17.2 16.5 18.5 16.5C21 16.5 23.5 15 26 13C23 11 20 11 16 12.5C12 11 9 11 6 13Z" fill="#ffffff" />
+                      <rect x="10.5" y="13.25" width="3" height="1.2" rx="0.6" fill="#000000" />
+                      <rect x="18.5" y="13.25" width="3" height="1.2" rx="0.6" fill="#000000" />
+                    </svg>
+                    <span className="report-brand-name">Maskr</span>
+                  </div>
+                  <span className="report-title-badge">Anonymization Audit</span>
+                </div>
+
+                <div className="report-section">
+                  <h3 className="report-section-title">Document Metadata</h3>
+                  <div className="report-meta-grid">
+                    <div className="report-meta-item">
+                      <div className="report-meta-label">File Name</div>
+                      <div className="report-meta-value">{file?.name || 'document.docx'}</div>
+                    </div>
+                    <div className="report-meta-item">
+                      <div className="report-meta-label">Audit Timestamp</div>
+                      <div className="report-meta-value">{new Date().toLocaleString()}</div>
+                    </div>
+                    <div className="report-meta-item">
+                      <div className="report-meta-label">Total Redactions</div>
+                      <div className="report-meta-value">{stats.length} matched entities</div>
+                    </div>
+                    <div className="report-meta-item">
+                      <div className="report-meta-label">Security Protocol</div>
+                      <div className="report-meta-value">Presidio + spaCy NER Hybrid Pipeline</div>
+                    </div>
+                  </div>
+                </div>
+
+                {evalReport && (
+                  <div className="report-section">
+                    <h3 className="report-section-title">Anonymization Precision Metrics</h3>
+                    <div className="report-metrics-row">
+                      <div className="report-metric-box">
+                        <div className="report-metric-label">Precision</div>
+                        <div className="report-metric-num">{(evalReport.global.Precision * 100).toFixed(1)}%</div>
+                      </div>
+                      <div className="report-metric-box">
+                        <div className="report-metric-label">Recall</div>
+                        <div className="report-metric-num">{(evalReport.global.Recall * 100).toFixed(1)}%</div>
+                      </div>
+                      <div className="report-metric-box">
+                        <div className="report-metric-label">F1-Score</div>
+                        <div className="report-metric-num">{(evalReport.global.F1 * 100).toFixed(1)}%</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="report-section">
+                  <h3 className="report-section-title">Redaction Log Summary</h3>
+                  <table className="report-table">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th>Original (Redacted)</th>
+                        <th>Alternative Replacement</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.slice(0, 150).map((s, idx) => (
+                        <tr key={idx}>
+                          <td><span className="badge badge-light" style={{ fontSize: '0.7rem' }}>{s.entity_type}</span></td>
+                          <td>{s.original}</td>
+                          <td style={{ color: '#6d28d9', fontWeight: 600 }}>{s.replacement}</td>
+                        </tr>
+                      ))}
+                      {stats.length > 150 && (
+                        <tr>
+                          <td colSpan={3} style={{ textAlign: 'center', padding: '0.5rem', color: '#64748b', fontStyle: 'italic' }}>
+                            ... and {stats.length - 150} more items (truncated for print sizing)
+                          </td>
+                        </tr>
+                      )}
+                      {stats.length === 0 && (
+                        <tr>
+                          <td colSpan={3} style={{ textAlign: 'center', padding: '1rem', color: '#64748b' }}>
+                            No redacted records.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

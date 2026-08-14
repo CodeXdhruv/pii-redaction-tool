@@ -1,7 +1,7 @@
 import os
 import base64
 import tempfile
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.redactor import PIIRedactor
@@ -32,7 +32,7 @@ def health_check():
     return {"status": "healthy", "spacy_loaded": redactor is not None}
 
 @app.post("/api/redact")
-async def redact_file(file: UploadFile = File(...)):
+async def redact_file(file: UploadFile = File(...), entities: list[str] = Query(None)):
     global redactor
     if redactor is None:
         try:
@@ -55,7 +55,7 @@ async def redact_file(file: UploadFile = File(...)):
         temp_out_path = temp_in_path.replace(suffix, f"_redacted{suffix}")
 
         # Perform redaction
-        stats = redactor.redact_document(temp_in_path, temp_out_path)
+        stats = redactor.redact_document(temp_in_path, temp_out_path, entities)
 
         # Read redacted file bytes and encode to base64
         with open(temp_out_path, "rb") as f:
