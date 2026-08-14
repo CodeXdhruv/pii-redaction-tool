@@ -1221,7 +1221,7 @@ footer {
 
 .hero-split-title {
   font-family: var(--font-title);
-  font-size: 2.75rem;
+  font-size: 3.25rem;
   font-weight: 800;
   line-height: 1.15;
   color: var(--text);
@@ -1231,7 +1231,7 @@ footer {
 
 .hero-split-subtitle {
   font-family: var(--font-title);
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: var(--text-muted);
   margin-bottom: 1.5rem;
@@ -1245,11 +1245,11 @@ footer {
 }
 
 .hero-split-desc {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   color: var(--text-muted);
   line-height: 1.6;
   margin-bottom: 2rem;
-  max-width: 520px;
+  max-width: 580px;
 }
 
 .hero-badges-grid {
@@ -1285,14 +1285,14 @@ footer {
 
 /* Compact Slider scale overrides */
 .compact-slider {
-  height: 380px !important;
-  max-width: 520px;
+  height: 420px !important;
+  max-width: 580px;
   border-radius: 16px !important;
   margin-bottom: 1rem !important;
 }
 
 .compact-preview {
-  padding: 1.25rem !important;
+  padding: 2.25rem 1.25rem 1.25rem 1.25rem !important;
   border-radius: 10px !important;
 }
 
@@ -1337,7 +1337,7 @@ footer {
 }
 
 .compact-track {
-  max-width: 440px !important;
+  max-width: 500px !important;
 }
 
 @media (max-width: 900px) {
@@ -1406,28 +1406,25 @@ footer {
 /* Label Tag Pills */
 .layer-tag-pill {
   position: absolute;
-  top: 1.5rem;
+  top: 0.65rem;
   font-family: var(--font-title);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.3rem 0.75rem;
-  border-radius: 12px;
-  letter-spacing: 0.5px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
   z-index: 5;
+  text-transform: uppercase;
 }
 
 .original-pill {
   left: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-muted);
+  opacity: 0.4;
 }
 
 .redacted-pill {
   right: 1.5rem;
-  background: linear-gradient(135deg, var(--primary), var(--pink));
-  color: var(--text);
-  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.25);
+  color: var(--pink);
+  opacity: 0.55;
 }
 
 /* Confidential Watermarks */
@@ -1724,6 +1721,59 @@ footer {
   .feature-badges-row {
     gap: 0.5rem;
     margin-bottom: 2rem;
+  }
+}
+
+/* Full screen landing adjustments and scroll arrows */
+.hero-split-container {
+  min-height: calc(100vh - 90px);
+  padding-bottom: 6rem;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.scroll-down-wrapper {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  z-index: 10;
+  user-select: none;
+}
+
+.scroll-down-wrapper:hover {
+  color: var(--text);
+  transform: translateX(-50%) translateY(2px);
+}
+
+.scroll-text {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scroll-arrow-icon {
+  animation: scroll-bounce 2s infinite;
+}
+
+@keyframes scroll-bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+  60% {
+    transform: translateY(-3px);
   }
 }
 

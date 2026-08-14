@@ -307,6 +307,7 @@ export default function Home() {
         <BeforeAfterRedaction />
       )}
 
+      <div id="upload-section" style={{ width: '100%' }}>
       {/* Step Indicators */}
       {status !== 'success' && status !== 'processing' && (
         <div className="steps-indicator">
@@ -810,6 +811,7 @@ export default function Home() {
           )}
         </div>
       )}
+      </div>
     </main>
 
       {/* Audit Report Modal */}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, Zap, Lock, ChevronsLeftRight } from 'lucide-react';
+import { ShieldCheck, Zap, Lock, ChevronsLeftRight, ChevronDown } from 'lucide-react';
 
 interface BeforeAfterRedactionProps {
   className?: string;
@@ -243,6 +243,15 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
           </div>
           <div className="slider-track-label">Redacted</div>
         </div>
+      </div>
+
+      {/* Scroll Down Indicator */}
+      <div className="scroll-down-wrapper" onClick={() => {
+        const el = document.getElementById('upload-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }}>
+        <span className="scroll-text">Start Redacting</span>
+        <ChevronDown className="scroll-arrow-icon" size={20} />
       </div>
     </section>
   );
