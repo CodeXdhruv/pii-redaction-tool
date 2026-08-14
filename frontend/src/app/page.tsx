@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import BeforeAfterRedaction from './components/BeforeAfterRedaction';
 
 interface PIIStat {
   original: string;
@@ -547,6 +548,10 @@ export default function Home() {
             </div>
           )}
         </div>
+      )}
+
+      {status !== 'success' && status !== 'processing' && (
+        <BeforeAfterRedaction />
       )}
 
       {/* STEP 3: Results Dashboard (Success View) */}
