@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ShieldCheck, Zap, Lock, ChevronsLeftRight, ChevronDown } from 'lucide-react';
+import { ShieldCheck, Zap, Lock, ChevronsLeftRight, ChevronDown, Shield } from 'lucide-react';
 
 interface BeforeAfterRedactionProps {
   className?: string;
@@ -90,9 +90,9 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
     <section className={`hero-split-container ${className}`}>
       {/* Left Column: Catchy copy and badges */}
       <div className={`hero-left-col ${animate ? 'fade-up-active' : ''}`}>
-        <div className="hero-badge">
-          <span className="hero-badge-dot"></span>
-          🛡️ Enterprise-Grade Document Redaction
+        <div className="hero-badge" style={{ gap: '0.4rem' }}>
+          <Shield size={12} />
+          Enterprise-Grade Document Redaction
         </div>
         <h1 className="hero-split-title">
           Anonymize Sensitive Files Instantly
