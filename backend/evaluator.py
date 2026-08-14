@@ -1,6 +1,6 @@
 import json
 from typing import List, Dict, Tuple
-from backend.redactor import PIIRedactor
+from .redactor import PIIRedactor
 
 # Evaluation dataset: passages representing realistic paragraphs from the prospectus/ticket logs,
 # containing the target PII types: Name, Email, Phone, Company, Address, SSN, Credit Card, DOB, IP.

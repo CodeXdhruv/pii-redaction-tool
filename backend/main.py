@@ -4,8 +4,8 @@ import tempfile
 from fastapi import FastAPI, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from backend.redactor import PIIRedactor
-from backend.evaluator import evaluate_redactor
+from .redactor import PIIRedactor
+from .evaluator import evaluate_redactor
 
 app = FastAPI(title="PII Redaction API", version="1.0.0")
 
