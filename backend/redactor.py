@@ -316,31 +316,71 @@ class PIIRedactor:
                 "confidence": r.score
             })
 
+    def _collect_paragraphs(self, doc) -> list:
+        """Collect all paragraphs from body, headers, footers, and tables."""
+        paragraphs = []
+        for section in doc.sections:
+            if section.header:
+                paragraphs.extend(section.header.paragraphs)
+                for table in section.header.tables:
+                    paragraphs.extend(self._collect_table_paragraphs(table))
+            if section.footer:
+                paragraphs.extend(section.footer.paragraphs)
+                for table in section.footer.tables:
+                    paragraphs.extend(self._collect_table_paragraphs(table))
+        paragraphs.extend(doc.paragraphs)
+        for table in doc.tables:
+            paragraphs.extend(self._collect_table_paragraphs(table))
+        return paragraphs
+
+    def _collect_table_paragraphs(self, table) -> list:
+        """Recursively collect paragraphs from a table."""
+        paragraphs = []
+        for row in table.rows:
+            for cell in row.cells:
+                paragraphs.extend(cell.paragraphs)
+                for nested_table in cell.tables:
+                    paragraphs.extend(self._collect_table_paragraphs(nested_table))
+        return paragraphs
+
     def redact_document(self, input_path: str, output_path: str, entities: list[str] = None) -> list[dict]:
-        """Redacts an entire docx file (paragraphs, tables, headers, footers)."""
+        """Redacts an entire docx file using a single batched NLP call for performance."""
         doc = Document(input_path)
         stats = []
 
-        # 1. Redact headers/footers
-        for section in doc.sections:
-            if section.header:
-                for p in section.header.paragraphs:
-                    self.redact_paragraph(p, stats, entities)
-                for table in section.header.tables:
-                    self.redact_table(table, stats, entities)
-            if section.footer:
-                for p in section.footer.paragraphs:
-                    self.redact_paragraph(p, stats, entities)
-                for table in section.footer.tables:
-                    self.redact_table(table, stats, entities)
+        # Collect all paragraphs upfront
+        all_paragraphs = self._collect_paragraphs(doc)
 
-        # 2. Redact main body paragraphs
-        for p in doc.paragraphs:
+        # Pre-warm the analysis cache using a single batched call
+        texts_to_analyze = [p.text for p in all_paragraphs if p.text.strip() and len(p.text.strip()) >= 4]
+
+        if texts_to_analyze:
+            entities_key = tuple(sorted(entities)) if entities else tuple(sorted(self.entity_mapping.keys()))
+            # Single NLP pipeline pass over all texts at once
+            batch_results = self.analyzer.analyze_batch(
+                texts=texts_to_analyze,
+                language="en",
+                entities=list(entities_key)
+            )
+            # Populate analysis cache so each redact_paragraph call is a fast cache hit
+            for text, result_list in zip(texts_to_analyze, batch_results):
+                cleaned = text.strip()
+                filtered = [r for r in result_list if r.score >= 0.4]
+                filtered_sorted = sorted(filtered, key=lambda x: (x.score, x.end - x.start), reverse=True)
+                non_overlapping = []
+                for res in filtered_sorted:
+                    overlap = any(
+                        max(res.start, acc.start) < min(res.end, acc.end)
+                        for acc in non_overlapping
+                    )
+                    if not overlap:
+                        non_overlapping.append(res)
+                final = sorted(non_overlapping, key=lambda x: x.start)
+                self.analysis_cache[(cleaned, entities_key)] = final
+
+        # Redact each paragraph — all cache hits now, so this is fast
+        for p in all_paragraphs:
             self.redact_paragraph(p, stats, entities)
-
-        # 3. Redact tables
-        for table in doc.tables:
-            self.redact_table(table, stats, entities)
 
         doc.save(output_path)
         return stats
