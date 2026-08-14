@@ -11,6 +11,11 @@ class PIIRedactor:
         }
         provider = NlpEngineProvider(nlp_configuration=configuration)
         nlp_engine = provider.create_engine()
+        if "en" in nlp_engine.nlp:
+            nlp = nlp_engine.nlp["en"]
+            for pipe in ["parser", "tagger", "lemmatizer", "attribute_ruler"]:
+                if nlp.has_pipe(pipe):
+                    nlp.remove_pipe(pipe)
         self.analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
         self._add_custom_recognizers()
         self.faker = Faker()
@@ -215,11 +220,10 @@ class PIIRedactor:
                 run_end_text = runs[r_end_idx].text
                 runs[r_start_idx].text = run_start_text[:char_start_offset] + fake_val
                 runs[r_end_idx].text = run_end_text[char_end_offset + 1:]
-            text = text[:start] + fake_val + text[end:]
-            char_to_run = []
-            for run_idx, run in enumerate(runs):
-                for char_idx in range(len(run.text)):
-                    char_to_run.append((run_idx, char_idx))
+            # We do not need to rebuild char_to_run because we are processing matches in descending 
+            # order (right-to-left). Any replacement at index 'start' does not affect the run index 
+            # and offset mappings for characters located *before* 'start'.
+            pass
             stats.append({
                 "original": original_val,
                 "replacement": fake_val,
