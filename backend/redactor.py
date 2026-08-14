@@ -155,3 +155,90 @@ class PIIRedactor:
                 "confidence": r.score
             })
         return redacted_text, changes[::-1]
+
+    def redact_paragraph(self, paragraph, stats):
+        text = paragraph.text
+        if not text.strip():
+            return
+        results = self.analyze_text(text)
+        if not results:
+            return
+        results_desc = sorted(results, key=lambda x: x.start, reverse=True)
+        runs = paragraph.runs
+        char_to_run = []
+        for run_idx, run in enumerate(runs):
+            for char_idx in range(len(run.text)):
+                char_to_run.append((run_idx, char_idx))
+        if len(char_to_run) != len(text):
+            for r in results_desc:
+                original_val = text[r.start:r.end]
+                fake_val = self.get_fake_replacement(original_val, r.entity_type)
+                text = text[:r.start] + fake_val + text[r.end:]
+                stats.append({
+                    "original": original_val,
+                    "replacement": fake_val,
+                    "entity_type": self.entity_mapping.get(r.entity_type, r.entity_type),
+                    "confidence": r.score
+                })
+            paragraph.text = text
+            return
+        for r in results_desc:
+            start = r.start
+            end = r.end
+            original_val = text[start:end]
+            fake_val = self.get_fake_replacement(original_val, r.entity_type)
+            r_start_idx, char_start_offset = char_to_run[start]
+            r_end_idx, char_end_offset = char_to_run[end - 1]
+            for idx in range(r_start_idx + 1, r_end_idx):
+                runs[idx].text = ""
+            if r_start_idx == r_end_idx:
+                run_text = runs[r_start_idx].text
+                new_run_text = run_text[:char_start_offset] + fake_val + run_text[char_end_offset + 1:]
+                runs[r_start_idx].text = new_run_text
+            else:
+                run_start_text = runs[r_start_idx].text
+                run_end_text = runs[r_end_idx].text
+                runs[r_start_idx].text = run_start_text[:char_start_offset] + fake_val
+                runs[r_end_idx].text = run_end_text[char_end_offset + 1:]
+            text = text[:start] + fake_val + text[end:]
+            char_to_run = []
+            for run_idx, run in enumerate(runs):
+                for char_idx in range(len(run.text)):
+                    char_to_run.append((run_idx, char_idx))
+            stats.append({
+                "original": original_val,
+                "replacement": fake_val,
+                "entity_type": self.entity_mapping.get(r.entity_type, r.entity_type),
+                "confidence": r.score
+            })
+
+    def redact_document(self, input_path: str, output_path: str) -> list[dict]:
+        import docx
+        from docx import Document
+        doc = Document(input_path)
+        stats = []
+        for section in doc.sections:
+            if section.header:
+                for p in section.header.paragraphs:
+                    self.redact_paragraph(p, stats)
+                for table in section.header.tables:
+                    self.redact_table(table, stats)
+            if section.footer:
+                for p in section.footer.paragraphs:
+                    self.redact_paragraph(p, stats)
+                for table in section.footer.tables:
+                    self.redact_table(table, stats)
+        for p in doc.paragraphs:
+            self.redact_paragraph(p, stats)
+        for table in doc.tables:
+            self.redact_table(table, stats)
+        doc.save(output_path)
+        return stats
+
+    def redact_table(self, table, stats):
+        for row in table.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    self.redact_paragraph(p, stats)
+                for nested_table in cell.tables:
+                    self.redact_table(nested_table, stats)
