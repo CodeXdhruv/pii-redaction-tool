@@ -133,7 +133,10 @@ export default function BeforeAfterRedaction({ className = "" }: BeforeAfterReda
         onTouchEnd={() => setIsDragging(false)}
       >
         {/* Original Side Document (Sits fully underneath) */}
-        <div className="document-layer original-layer">
+        <div 
+          className="document-layer original-layer"
+          style={{ clipPath: `inset(0 ${100 - sliderVal}% 0 0)` }}
+        >
           <div className="layer-tag-pill original-pill">ORIGINAL</div>
           
           <div className="doc-watermark">CONFIDENTIAL</div>
